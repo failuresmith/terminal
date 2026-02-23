@@ -102,7 +102,7 @@ async function getTextForFile(meta: FileMeta): Promise<string> {
 }
 
 export async function getResumeLines(): Promise<{ meta: FileMeta; lines: string[] } | null> {
-  const meta = findFileByName("llm_tsx.txt");
+  const meta = findFileByName("llm.txt");
   if (!meta) return null;
   if (resumeLinesCache.lines) {
     return { meta, lines: resumeLinesCache.lines };

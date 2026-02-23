@@ -4,7 +4,7 @@ const CORE_ASSETS = [
   "",
   "index.html",
   "files/miladtsx_software_engineer_resume.pdf",
-  "files/llm_tsx.txt",
+  "files/llm.txt",
 ].map((relative) => `${BASE_PATH}${relative}`);
 const INDEX_FALLBACK = `${BASE_PATH}index.html`;
 

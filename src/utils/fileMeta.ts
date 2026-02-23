@@ -4,7 +4,7 @@ import { findFileByName } from "@data/files";
 export const FILE_ALIASES: Record<string, string> = {
   cv: "miladtsx_software_engineer_resume.pdf",
   resume: "miladtsx_software_engineer_resume.pdf",
-  llm: "llm_tsx.txt",
+  llm: "llm.txt",
 };
 
 export function formatBytes(value: number): string {

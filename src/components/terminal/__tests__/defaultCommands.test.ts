@@ -53,10 +53,10 @@ describe("default commands", () => {
         return typeof segment !== "string" && segment.type === "command";
       });
 
-    expect(textRows).toContain("llm_tsx.txt");
+    expect(textRows).toContain("llm.txt");
     expect(textRows).toContain("miladtsx_software_engineer_resume.pdf");
     expect(
-      downloadCommands.some((segment) => segment.command === "download llm_tsx.txt"),
+      downloadCommands.some((segment) => segment.command === "download llm.txt"),
     ).toBe(true);
     expect(
       downloadCommands.some(
@@ -73,7 +73,7 @@ describe("default commands", () => {
     expect(verifyHandler).toBeTruthy();
 
     // align manifest entry with mocked empty content so the hash matches
-    const llm = findFileByName("llm_tsx.txt");
+    const llm = findFileByName("llm.txt");
     if (llm) {
       llm.sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
       llm.size = 0;
@@ -83,8 +83,8 @@ describe("default commands", () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const output = await verifyHandler?.({
-      args: ["llm_tsx.txt"],
-      raw: "verify llm_tsx.txt",
+      args: ["llm.txt"],
+      raw: "verify llm.txt",
       model,
       registry,
     });

@@ -1,7 +1,7 @@
 [
   {
-    "name": "llm_tsx.txt",
-    "path": "files/llm_tsx.txt",
+    "name": "llm.txt",
+    "path": "files/llm.txt",
     "size": 9442,
     "sha256": "dda6c893cdfcb3029da9d69c34b1143feb2c398dc361533f51bfe225e4767867",
     "text": true,
