@@ -37,7 +37,6 @@ export default function Terminal(props: TerminalProps) {
   const fontController = useTerminalFonts();
   const colorController = useTerminalColors();
   const currentColor = colorController.getCurrentColor();
-  const isNightSky = currentColor.id === "night_sky";
   const appearanceController = useMemo(
     () => ({ font: fontController, color: colorController }),
     [fontController, colorController],
@@ -458,13 +457,14 @@ export default function Terminal(props: TerminalProps) {
       aria-label="Terminal portfolio"
     >
       <Starfield
-        enabled={isNightSky}
+        enabled={isPlaygroundFocused}
         density={4}
         speed={0.3}
         twinkleRate={0.4}
         layers={3}
         mode="constellation"
         focused={isPlaygroundFocused}
+        themeTone={currentColor.tone}
         visualScale={terminalFontSize / 15}
       />
       {notification ? (

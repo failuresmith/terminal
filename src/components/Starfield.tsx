@@ -59,6 +59,8 @@ export interface StarfieldProps {
   focused?: boolean;
   /** Scales star/network element size (wired to terminal font controls) */
   visualScale?: number;
+  /** Active UI tone so constellation contrast can adapt for light/dark themes */
+  themeTone?: "dark" | "light";
 }
 
 /**
@@ -88,6 +90,7 @@ export function Starfield({
   mode = "ambient",
   focused = false,
   visualScale = 1,
+  themeTone = "dark",
 }: StarfieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -405,12 +408,15 @@ export function Starfield({
     failPulse: number,
     visibility: number,
   ) => {
+    const isLightTone = themeTone === "light";
     const alpha = Math.min(1, 0.66 + pulse * 0.34 + failPulse * 0.24) * visibility;
     const glow = 0.35 + pulse * 0.65;
     const failGlow = 0.25 + failPulse * 0.75;
     const borderColor = failPulse > 0.08
-      ? `rgba(255, 139, 139, ${0.82 * failGlow * alpha})`
-      : `rgba(214, 228, 246, ${0.86 * glow * alpha})`;
+      ? `rgba(196, 42, 42, ${0.86 * failGlow * alpha})`
+      : isLightTone
+        ? `rgba(34, 74, 128, ${0.86 * glow * alpha})`
+        : `rgba(214, 228, 246, ${0.86 * glow * alpha})`;
     ctx.save();
     ctx.translate(x, y - 18);
     ctx.scale(elementScale, elementScale);
@@ -418,19 +424,25 @@ export function Starfield({
     ctx.beginPath();
     ctx.arc(0, 0, 16, 0, Math.PI * 2);
     ctx.fillStyle = failPulse > 0.08
-      ? `rgba(255, 116, 116, ${0.22 * failGlow * alpha})`
-      : `rgba(158, 220, 255, ${0.2 * glow * alpha})`;
+      ? `rgba(219, 74, 74, ${0.28 * failGlow * alpha})`
+      : isLightTone
+        ? `rgba(112, 179, 255, ${0.28 * glow * alpha})`
+        : `rgba(158, 220, 255, ${0.2 * glow * alpha})`;
     ctx.fill();
 
     ctx.beginPath();
     ctx.roundRect(-15, -10, 30, 20, 6);
-    ctx.fillStyle = `rgba(10, 16, 26, ${0.95 * alpha})`;
+    ctx.fillStyle = isLightTone
+      ? `rgba(245, 250, 255, ${0.96 * alpha})`
+      : `rgba(10, 16, 26, ${0.95 * alpha})`;
     ctx.fill();
     ctx.lineWidth = 1.1;
     ctx.strokeStyle = borderColor;
     ctx.stroke();
 
-    ctx.fillStyle = `rgba(240, 247, 255, ${0.96 * glow * alpha})`;
+    ctx.fillStyle = isLightTone
+      ? `rgba(19, 32, 52, ${0.96 * glow * alpha})`
+      : `rgba(240, 247, 255, ${0.96 * glow * alpha})`;
     ctx.font = "11px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -700,6 +712,7 @@ export function Starfield({
   ) => {
     ctx.clearRect(0, 0, width, height);
     const c = constellationRef.current;
+    const isLightTone = themeTone === "light";
     const points = c.nodes.map((node) => ({ x: node.renderX, y: node.renderY }));
 
     const activeEdges = c.edges
@@ -730,12 +743,15 @@ export function Starfield({
           * edgeVisibility
           * visibility
           * c.visibilityBoost
-          * CONSTELLATION_VISIBILITY_MULTIPLIER,
+          * CONSTELLATION_VISIBILITY_MULTIPLIER
+          * (isLightTone ? 1.25 : 1),
       );
       ctx.beginPath();
       ctx.moveTo(fromP.x, fromP.y);
       ctx.lineTo(toP.x, toP.y);
-      ctx.strokeStyle = `rgba(157, 195, 255, ${alpha})`;
+      ctx.strokeStyle = isLightTone
+        ? `rgba(36, 76, 128, ${alpha})`
+        : `rgba(157, 195, 255, ${alpha})`;
       ctx.lineWidth =
         (0.32 + energyMix * 0.26) * (0.84 + c.visibilityBoost * 0.12) * (0.72 + edgeVisibility * 0.28) * elementScale;
       ctx.stroke();
@@ -790,6 +806,10 @@ export function Starfield({
       const ioColor = "158, 255, 196";
       const downColor = "234, 84, 84";
       const queuedColor = "255, 213, 102";
+      const standbyColorLight = "79, 96, 118";
+      const ioColorLight = "23, 143, 84";
+      const downColorLight = "184, 44, 44";
+      const queuedColorLight = "177, 123, 24";
       const opacity = Math.max(
         0.12,
         Math.min(
@@ -798,18 +818,19 @@ export function Starfield({
             * visibility
             * c.visibilityBoost
             * CONSTELLATION_VISIBILITY_MULTIPLIER
+            * (isLightTone ? 1.18 : 1)
             * reveal,
         ),
       );
       const color = node.status === "offline"
-        ? standbyColor
+        ? (isLightTone ? standbyColorLight : standbyColor)
         : node.status === "degraded" || node.status === "recovering"
-          ? downColor
+          ? (isLightTone ? downColorLight : downColor)
         : isQueued
-          ? queuedColor
+          ? (isLightTone ? queuedColorLight : queuedColor)
           : isConnected || isCommunicating
-            ? ioColor
-            : standbyColor;
+            ? (isLightTone ? ioColorLight : ioColor)
+            : (isLightTone ? standbyColorLight : standbyColor);
 
       ctx.beginPath();
       ctx.arc(
@@ -1176,9 +1197,9 @@ export function Starfield({
         left: 0,
         width: "100%",
         height: "100%",
-        filter: focused ? "none" : "blur(2px)",
-        opacity: focused ? 1 : 0.72,
-        transform: focused ? "none" : "scale(1.015)",
+        filter: "none",
+        opacity: 1,
+        transform: "none",
         transformOrigin: "center",
         pointerEvents: "none",
         zIndex: 1,
