@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MarkdownBlock } from "@components/MarkdownBlock";
+import { SparklesCore } from "@components/ui/sparkles";
+import { useTerminalTone } from "@hooks/useTerminalTone";
 import { copyToClipboard, buildShareLink } from "@utils";
 import {
   CommandSegment,
@@ -97,6 +99,41 @@ function CopyButton({
       <span className={`t-copyState${copied ? " is-visible" : ""}`}>
         {copied && "Copied"}
       </span>
+    </button>
+  );
+}
+
+function SparkleCommandButton({
+  label,
+  ariaLabel,
+  onClick,
+}: {
+  label: string;
+  ariaLabel: string;
+  onClick: () => void;
+}) {
+  const tone = useTerminalTone();
+  const particleColor = tone === "light" ? "#050506" : "#f6fbff";
+
+  return (
+    <button
+      type="button"
+      className="t-commandLink t-pressable is-sparkle"
+      onClick={onClick}
+      aria-label={ariaLabel}
+    >
+      <span className="t-sparkleSurface" aria-hidden="true">
+        <SparklesCore
+          background="transparent"
+          className="t-sparkleCanvas"
+          minSize={0.4}
+          maxSize={1.2}
+          particleColor={particleColor}
+          particleDensity={120}
+          speed={0.4}
+        />
+      </span>
+      <span className="t-sparkleLabel">{label}</span>
     </button>
   );
 }
@@ -463,6 +500,16 @@ function renderSegment(
     case "command": {
       const attrs = segment as CommandSegment;
       const ariaLabel = attrs.ariaLabel || `Run ${attrs.command}`;
+      if (attrs.variant === "sparkle") {
+        return (
+          <SparkleCommandButton
+            key={key}
+            label={attrs.label}
+            ariaLabel={ariaLabel}
+            onClick={() => executeCommand(attrs.command)}
+          />
+        );
+      }
       const variantClass =
         attrs.variant === "primary"
           ? " is-primary"

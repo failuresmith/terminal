@@ -7,7 +7,7 @@ import type { TerminalColorController, TerminalColorOption } from "@utils";
 export interface CommandButton {
   command: string;
   label?: string;
-  variant?: "primary" | "secondary" | "link";
+  variant?: "primary" | "secondary" | "link" | "sparkle";
 }
 
 export interface TerminalProps {

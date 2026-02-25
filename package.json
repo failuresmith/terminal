@@ -5,7 +5,7 @@
     "email": "miladtsx+terminalpackage@gmail.com",
     "name": "TSX"
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,11 +16,19 @@
   },
   "dependencies": {
     "@calcom/atoms": "^2.3.3",
+    "@tsparticles/engine": "^3.9.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "ky": "^1.7.2",
     "lucide-react": "^0.561.0",
     "marked": "9.1.6",
+    "motion": "^12.23.24",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
