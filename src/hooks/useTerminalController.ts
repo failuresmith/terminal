@@ -343,15 +343,15 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       type: "markdown",
       markdown: `
 <div class="intro-hero">
-  <div class="intro-headline">Hi, I'm Milad</div>
-  <div class="intro-subline">I keep your product alive through growth & change.</div>
+  <div class="intro-headline">Milad protects your systems/protocol from expensive failure.</div>
+  <div class="intro-subline">He focuses on the failures that damage trust, lock capital, or require manual recovery — so your team can move fast safely.</div>
   <div class="intro-proof">
-    <div class="intro-proofLabel">examples</div>
+    <div class="intro-proofLabel">Proof</div>
     <div class="intro-proofList">
-      <div><span class="intro-proofMetric">Increased runaway</span><span class="intro-proofContext">Cut AWS spend −60%</span></div>
-      <div><span class="intro-proofMetric">Less unhappy users</span><span class="intro-proofContext">Reliability 65% → 92%</span></div>
-      <div><span class="intro-proofMetric">10× More users, same cost</span><span class="intro-proofContext">Replacing inefficient parts</span></div>
-    </div>
+       <div><span class="intro-proofMetric">~$4M secured</span><span class="intro-proofContext">Zero incidents in live operations</span></div>
+      <div><span class="intro-proofMetric">65% → 92%</span><span class="intro-proofContext">Reliability via recovery + guardrails</span></div>
+      <div><span class="intro-proofMetric">−60% cost</span><span class="intro-proofContext">Simplified architecture</span></div>
+     </div>
   </div>
 </div>
       `.trim(),
@@ -365,14 +365,6 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       const button = createCommandSegment(cmd.command, label, cmd.variant);
 
       if (index === 0) {
-        primaryCtaLine.push(button);
-        return;
-      }
-
-      if (index === 1) {
-        if (primaryCtaLine.length) {
-          primaryCtaLine.push({ type: "text", text: "  " });
-        }
         primaryCtaLine.push(button);
         return;
       }

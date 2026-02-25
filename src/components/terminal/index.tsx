@@ -5,8 +5,7 @@ import { useTerminalColors } from "@hooks/useTerminalColors";
 import { useNotificationOverlay } from "@hooks/useNotificationOverlay";
 import { NotificationOverlay } from "@components/NotificationOverlay";
 import { TerminalLineRow } from "@components/TerminalLine";
-import { Starfield } from "@components/Starfield";
-import { TerminalLineInput, TerminalProps } from "@types";
+import { TerminalProps } from "@types";
 import {
   FONT_SIZE_MAX,
   FONT_SIZE_MIN,
@@ -22,16 +21,6 @@ import { searchStore } from "@stores/searchStore";
 const MENU_WIDTH = 260;
 const MENU_HEIGHT = 200;
 const CLAMP_MARGIN = 6;
-
-const isLineBlank = (line: TerminalLineInput) => {
-  if (typeof line === "string") {
-    return line.trim().length === 0;
-  }
-
-  return line.every(
-    (segment) => segment.type === "text" && segment.text.trim().length === 0,
-  );
-};
 
 export default function Terminal(props: TerminalProps) {
   const fontController = useTerminalFonts();
@@ -86,10 +75,6 @@ export default function Terminal(props: TerminalProps) {
   const [caretStyle, setCaretStyle] = useState<React.CSSProperties | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<number | null>(null);
-  const isPlaygroundFocused = useMemo(() => {
-    if (lines.length === 0) return true;
-    return lines.every(isLineBlank);
-  }, [lines]);
   const showInput = showIntroInput;
   const introRange = introStartLineRange;
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -146,26 +131,16 @@ export default function Terminal(props: TerminalProps) {
     [focusInput]
   );
 
-  const openPlayground = useCallback(() => {
-    executeCommand("clear");
-  }, [executeCommand]);
-
   const contextMenuItems = useMemo(
     () => [
       {
         id: "human",
-        label: "Lets talk",
-        meta: "",
+        label: "Contact me",
+        meta: "Lets talk about your project",
         action: () => executeCommand("contact"),
       },
-      {
-        id: "starfield-fullscreen",
-        label: "Playground",
-        meta: "Clear the terminal and show a Distributed Network",
-        action: openPlayground,
-      },
     ],
-    [executeCommand, openPlayground]
+    [executeCommand]
   );
 
   const handleContextMenu = useCallback(
@@ -456,17 +431,6 @@ export default function Terminal(props: TerminalProps) {
       role="application"
       aria-label="Terminal portfolio"
     >
-      <Starfield
-        enabled={isPlaygroundFocused}
-        density={4}
-        speed={0.3}
-        twinkleRate={0.4}
-        layers={3}
-        mode="constellation"
-        focused={isPlaygroundFocused}
-        themeTone={currentColor.tone}
-        visualScale={terminalFontSize / 15}
-      />
       {notification ? (
         <NotificationOverlay notification={notification} onDismiss={dismiss} />
       ) : null}
