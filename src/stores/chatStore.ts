@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { sendTelemetryEvent } from "@hooks/useTelemetry";
 
-type ChatRole = "assistant" | "user" | "intro";
+type ChatRole = "assistant" | "user";
 
 export type ChatMessage = {
   id: string;
@@ -16,6 +16,7 @@ type ChatTone = "technical" | "non-technical" | null;
 type ChatStatus = {
   isOpen: boolean;
   isMinimized: boolean;
+  maximizeOnOpen: boolean;
   loading: boolean;
   input: string;
   unread: number;
@@ -30,21 +31,16 @@ type ChatStore = ChatStatus & {
   setTone: (tone: ChatTone) => void;
   clear: () => void;
   openChat: () => void;
+  openChatMaximized: () => void;
   closeChat: () => void;
   minimizeChat: () => void;
   toggleChat: () => void;
   markRead: () => void;
   cancel: () => void;
+  setMaximizeOnOpen: (value: boolean) => void;
 };
 
 const CHATBOT_URL = import.meta.env.VITE_CHATBOT_URL;
-
-const INTRO_MESSAGE: ChatMessage = {
-  id: "intro",
-  role: "intro",
-  createdAt: Date.now(),
-  content: "Welcome!",
-};
 
 const uuid = () => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -170,14 +166,16 @@ export const useChatStore = create<ChatStore>()(
       };
 
       return {
-        messages: [{ ...INTRO_MESSAGE }],
+        messages: [],
         isOpen: false,
         isMinimized: false,
+        maximizeOnOpen: false,
         loading: false,
         input: "",
         unread: 0,
         error: null,
         tone: null,
+        setMaximizeOnOpen: (value: boolean) => set({ maximizeOnOpen: value }),
         setInput: (value: string) => set({ input: value }),
         setTone: (tone: ChatTone) => set({ tone }),
         markRead: () => set((state) => (state.unread ? { unread: 0 } : {})),
@@ -187,7 +185,16 @@ export const useChatStore = create<ChatStore>()(
             isMinimized: false,
             unread: 0,
             error: null,
+            maximizeOnOpen: false,
             // leave messages as-is
+          })),
+        openChatMaximized: () =>
+          set(() => ({
+            isOpen: true,
+            isMinimized: false,
+            unread: 0,
+            error: null,
+            maximizeOnOpen: true,
           })),
         closeChat: () =>
           set(() => ({
@@ -208,7 +215,7 @@ export const useChatStore = create<ChatStore>()(
           })),
         clear: () =>
           set(() => ({
-            messages: [{ ...INTRO_MESSAGE, id: uuid(), createdAt: Date.now() }],
+            messages: [],
             input: "",
             unread: 0,
             loading: false,
@@ -371,5 +378,7 @@ export const useChatStore = create<ChatStore>()(
 );
 
 export const openChat = () => useChatStore.getState().openChat();
+export const openChatMaximized = () =>
+  useChatStore.getState().openChatMaximized();
 export const toggleChat = () => useChatStore.getState().toggleChat();
 export const minimizeChat = () => useChatStore.getState().minimizeChat();

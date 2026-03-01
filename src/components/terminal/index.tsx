@@ -7,9 +7,6 @@ import { NotificationOverlay } from "@components/NotificationOverlay";
 import { TerminalLineRow } from "@components/TerminalLine";
 import { TerminalProps } from "@types";
 import {
-  FONT_SIZE_MAX,
-  FONT_SIZE_MIN,
-  FONT_SIZE_STEP,
   useUiStore,
   useShallow,
 } from "@stores/uiStore";
@@ -64,9 +61,6 @@ export default function Terminal(props: TerminalProps) {
     })),
   );
   const terminalFontSize = useUiStore((state) => state.terminalFontSize);
-  const setTerminalFontSize = useUiStore(
-    (state) => state.setTerminalFontSize,
-  );
   const [collapsedCommands, setCollapsedCommands] = useState<Record<number, boolean>>({});
   const caretShellRef = useRef<HTMLDivElement | null>(null);
   const caretMetricsRef = useRef<{ font: string; charWidth: number; lineHeight: number } | null>(
@@ -206,23 +200,10 @@ export default function Terminal(props: TerminalProps) {
     return () => document.removeEventListener("keydown", handleSearchShortcut);
   }, [openSearch]);
 
-  const adjustFontSize = useCallback(
-    (delta: number) => {
-      const nextSize = Math.min(
-        FONT_SIZE_MAX,
-        Math.max(FONT_SIZE_MIN, terminalFontSize + delta),
-      );
-      if (nextSize === terminalFontSize) return;
-      setTerminalFontSize(nextSize);
-    },
-    [terminalFontSize, setTerminalFontSize],
-  );
   const rootStyle = useMemo<React.CSSProperties>(
     () => ({ fontSize: `${terminalFontSize}px` }),
     [terminalFontSize],
   );
-  const canDecrease = terminalFontSize > FONT_SIZE_MIN;
-  const canIncrease = terminalFontSize < FONT_SIZE_MAX;
   const prevCommandCountRef = useRef<number>(0);
 
   const commandLines = useMemo(() => {
@@ -569,10 +550,6 @@ export default function Terminal(props: TerminalProps) {
       </div>
       <TerminalToolbar
         onOpenSearch={openSearch}
-        onIncrease={() => adjustFontSize(FONT_SIZE_STEP)}
-        onDecrease={() => adjustFontSize(-FONT_SIZE_STEP)}
-        canIncrease={canIncrease}
-        canDecrease={canDecrease}
       />
       <SearchModal executeCommand={executeCommand} />
       <ChatDock />

@@ -15,6 +15,7 @@ export function ChatDock() {
     isMinimized,
     unread,
     tone,
+    maximizeOnOpen,
     setInput,
     setTone,
     sendMessage,
@@ -23,6 +24,7 @@ export function ChatDock() {
     minimizeChat,
     cancel,
     markRead,
+    setMaximizeOnOpen,
   } = useChatStore(
     useShallow((state) => ({
       messages: state.messages,
@@ -32,6 +34,7 @@ export function ChatDock() {
       isMinimized: state.isMinimized,
       unread: state.unread,
       tone: state.tone,
+      maximizeOnOpen: state.maximizeOnOpen,
       setInput: state.setInput,
       setTone: state.setTone,
       sendMessage: state.sendMessage,
@@ -40,6 +43,7 @@ export function ChatDock() {
       minimizeChat: state.minimizeChat,
       cancel: state.cancel,
       markRead: state.markRead,
+      setMaximizeOnOpen: state.setMaximizeOnOpen,
     })),
   );
 
@@ -78,6 +82,13 @@ export function ChatDock() {
   }, [isOpen]);
 
   useEffect(() => {
+    if (isOpen && maximizeOnOpen) {
+      setIsMaximized(true);
+      setMaximizeOnOpen(false);
+    }
+  }, [isOpen, maximizeOnOpen, setMaximizeOnOpen]);
+
+  useEffect(() => {
     if (!isMaximized) return;
     setDragOffset({ x: 0, y: 0 });
     setIsDragging(false);
@@ -96,13 +107,13 @@ export function ChatDock() {
     () => [
       {
         key: "technical" as const,
-        label: "Technical",
-        helper: "Concise, code-first",
+        label: "Engineer",
+        helper: "Concise, Technical",
       },
       {
         key: "non-technical" as const,
-        label: "Non-Technical",
-        helper: "Plain language",
+        label: "Non-Engineer",
+        helper: "Business language",
       },
     ],
     [],
@@ -164,6 +175,7 @@ export function ChatDock() {
   };
 
   const showToneSelector = !messages.some((message) => message.role === "user");
+  console.log("showToneSelector", showToneSelector)
 
   const renderedMessages = useMemo(() => {
     const nodes: React.ReactNode[] = [];
@@ -196,52 +208,50 @@ export function ChatDock() {
           )}
         </div>,
       );
-
-      if (
-        !toneInserted &&
-        showToneSelector &&
-        message.role === "intro" &&
-        index === 0
-      ) {
-        nodes.push(
-          <div
-            key="chat-tone-selector"
-            className="chat-tone"
-            aria-label="Tone selector"
-          >
-            <span id="chat-tone-label" className="chat-tone-title">
-              Select Your Desired Tone
-            </span>
-            <div
-              className="chat-tone-options"
-              role="radiogroup"
-              aria-labelledby="chat-tone-label"
-            >
-              {tonePresets.map((preset) => (
-                <label
-                  key={preset.key}
-                  className={`chat-tone-option${tone === preset.key ? " is-active" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name="chat-tone"
-                    value={preset.key}
-                    checked={tone === preset.key}
-                    onChange={() => handleTonePreset(preset.key)}
-                  />
-                  <span className="chat-tone-radio" aria-hidden="true" />
-                  <div className="chat-tone-text">
-                    <span className="chat-tone-option-label">{preset.label}</span>
-                    <span className="chat-tone-option-helper">{preset.helper}</span>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>,
-        );
-        toneInserted = true;
-      }
     });
+
+    if (
+      !toneInserted &&
+      showToneSelector
+    ) {
+      nodes.push(
+        <div
+          key="chat-tone-selector"
+          className="chat-tone"
+          aria-label="Tone selector"
+        >
+          <span id="chat-tone-label" className="chat-tone-title">
+            Select Your Desired Tone
+          </span>
+          <div
+            className="chat-tone-options"
+            role="radiogroup"
+            aria-labelledby="chat-tone-label"
+          >
+            {tonePresets.map((preset) => (
+              <label
+                key={preset.key}
+                className={`chat-tone-option${tone === preset.key ? " is-active" : ""}`}
+              >
+                <input
+                  type="radio"
+                  name="chat-tone"
+                  value={preset.key}
+                  checked={tone === preset.key}
+                  onChange={() => handleTonePreset(preset.key)}
+                />
+                <span className="chat-tone-radio" aria-hidden="true" />
+                <div className="chat-tone-text">
+                  <span className="chat-tone-option-label">{preset.label}</span>
+                  <span className="chat-tone-option-helper">{preset.helper}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>,
+      );
+      toneInserted = true;
+    }
 
     return nodes;
   }, [messages, showToneSelector, tone, tonePresets, handleTonePreset]);
@@ -288,7 +298,7 @@ export function ChatDock() {
             >
               <div className="chat-title">
                 <Bot size={18} />
-                <span>CV-Bot</span>
+                <span>Welcome!</span>
               </div>
               <div className="chat-actions">
                 <button
