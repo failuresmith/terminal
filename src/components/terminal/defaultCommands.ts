@@ -42,7 +42,7 @@ import { searchStore } from "@stores/searchStore";
 
 export const DEFAULT_SUGGESTED_COMMANDS: CommandButton[] = [
   { command: "contact", label: "Contact", variant: "primary" },
-  { command: "work", label: "See Proof", variant: "secondary" },
+  { command: "work", label: "Case studies", variant: "secondary" },
   { command: "download resume", label: "CV", variant: "secondary" },
 ];
 

@@ -435,7 +435,7 @@
   }
 
   .t-commandLink.is-primary {
-    --chip-bg: color-mix(in srgb, var(--accent) 80%, #0a0f18 20%);
+    --chip-bg: color-mix(in srgb, var(--accent) 10%, #0a0f18 10%);
     --chip-hover-bg: color-mix(in srgb, var(--accent) 82%, #0a0f18 18%);
     --chip-border: color-mix(in srgb, var(--accent) 66%, #050915 22%);
     --chip-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
@@ -1734,7 +1734,6 @@
     --terminal-search-hover-bg: rgba(255, 255, 255, 0.06);
     --terminal-search-hover-border: rgba(255, 255, 255, 0.35);
     --terminal-search-hover-shadow:
-      0 12px 30px rgba(0, 0, 0, 0.28),
       inset 0 1px 3px rgba(0, 0, 0, 0.35),
       inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     --terminal-search-active-bg: rgba(255, 255, 255, 0.02);
@@ -1814,12 +1813,11 @@
     --terminal-askai-border: color-mix(in srgb, var(--border) 60%, rgba(255, 255, 255, 0.7));
     --terminal-askai-color: color-mix(in srgb, var(--text) 92%, rgba(255, 255, 255, 0.8));
     --terminal-askai-shadow:
-      0 16px 48px rgba(0, 0, 0, 0.35),
+      0 0px 1px rgba(0, 0, 0, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.18);
     --terminal-askai-hover-bg: rgba(255, 255, 255, 0.1);
     --terminal-askai-hover-border: rgba(255, 255, 255, 0.4);
     --terminal-askai-hover-shadow:
-      0 16px 48px rgba(0, 0, 0, 0.35),
       inset 0 1px 3px rgba(0, 0, 0, 0.35),
       inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     --terminal-askai-active-bg: rgba(255, 255, 255, 0.05);
@@ -1846,11 +1844,13 @@
     pointer-events: auto;
     transition: transform 240ms ease, width 260ms ease, box-shadow 220ms ease, background-color 220ms ease, border-color 220ms ease, color 220ms ease, filter 220ms ease;
     overflow: hidden;
+    backdrop-filter: blur(4px) saturate(120%);
+    -webkit-backdrop-filter: blur(4px) saturate(120%);
   }
 
   .terminal-askAi:hover,
   .terminal-askAi:focus-visible {
-    transform: translateX(-50%) translateY(1.5px) scale(0.995);
+    transform: translateX(-50%) translateY(1.2px) scale(0.995);
     filter: brightness(1.03);
     border-color: var(--terminal-askai-hover-border);
     background: var(--terminal-askai-hover-bg);
@@ -1926,6 +1926,29 @@
     background: var(--accent);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
     z-index: 1;
+    animation: terminal-toolbar-dot-breathe 2.6s ease-in-out infinite;
+  }
+
+  @keyframes terminal-toolbar-dot-breathe {
+
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.3;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-toolbar-dot {
+      animation: none;
+    }
   }
 
   @media (max-width: 768px) {
@@ -1934,7 +1957,6 @@
       right: 12px;
       width: 40px;
       height: 40px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
     }
 
     .terminal-askAi {
