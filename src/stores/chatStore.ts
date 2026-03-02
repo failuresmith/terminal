@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { sendTelemetryEvent } from "@hooks/useTelemetry";
+import { simulateTypingSequence, humanDelay } from "@utils/typingSimulation";
 
 type ChatRole = "assistant" | "user";
 
@@ -125,24 +126,36 @@ export const useChatStore = create<ChatStore>()(
   persist(
     (set, get) => {
       let abortController: AbortController | null = null;
+      let typingTimers: number[] = [];
+      let pendingText = "";
+      let currentTyped = "";
+      let finalizeWhenQueueEmpty = false;
 
-      const pushAssistantChunk = (chunk: string) => {
+      const clearTypingTimers = () => {
+        typingTimers.forEach((t) => window.clearTimeout(t));
+        typingTimers = [];
+      };
+
+      const stopTypingLoop = () => {
+        clearTypingTimers();
+        pendingText = "";
+        currentTyped = "";
+        finalizeWhenQueueEmpty = false;
+      };
+
+      const ensureStreamingMessage = () => {
+        const last = get().messages.at(-1);
+        if (last?.role === "assistant" && last.id === "streaming") return;
         set((state) => {
-          const messages = [...state.messages];
-          const last = messages[messages.length - 1];
-          if (last?.role === "assistant" && last.id === "streaming") {
-            messages[messages.length - 1] = {
-              ...last,
-              content: last.content + chunk,
-            };
-          } else {
-            messages.push({
+          const messages = [
+            ...state.messages,
+            {
               id: "streaming",
               role: "assistant",
               createdAt: Date.now(),
-              content: chunk,
-            });
-          }
+              content: currentTyped,
+            },
+          ];
           return {
             messages,
             loading: true,
@@ -154,7 +167,63 @@ export const useChatStore = create<ChatStore>()(
         });
       };
 
+      const updateStreamingContent = (content: string) => {
+        set((state) => {
+          const messages = [...state.messages];
+          const last = messages[messages.length - 1];
+          if (last?.role === "assistant" && last.id === "streaming") {
+            messages[messages.length - 1] = { ...last, content };
+          } else {
+            messages.push({
+              id: "streaming",
+              role: "assistant",
+              createdAt: Date.now(),
+              content,
+            });
+          }
+          return { messages, loading: true };
+        });
+      };
+
+      const startTyping = () => {
+        if (!pendingText) return;
+        ensureStreamingMessage();
+        const textToType = pendingText;
+        pendingText = "";
+        const { timers, duration } = simulateTypingSequence(textToType, {
+          delayFn: (prev, ch) => humanDelay(currentTyped + prev, ch),
+          onChar: (typed) => {
+            const nextContent = currentTyped + typed;
+            currentTyped = nextContent;
+            updateStreamingContent(nextContent);
+          },
+        });
+        typingTimers = timers;
+        const finalizeTimer = window.setTimeout(() => {
+          typingTimers = typingTimers.filter((t) => t !== finalizeTimer);
+          if (pendingText.length) {
+            startTyping();
+          } else if (finalizeWhenQueueEmpty) {
+            finalizeAssistant();
+            finalizeWhenQueueEmpty = false;
+          }
+        }, duration + 10);
+        typingTimers.push(finalizeTimer);
+      };
+
+      const pushAssistantChunk = (chunk: string) => {
+        if (!chunk) return;
+        pendingText += chunk;
+        if (typingTimers.length === 0) {
+          startTyping();
+        }
+      };
+
       const finalizeAssistant = () => {
+        if (pendingText.length || typingTimers.length) {
+          finalizeWhenQueueEmpty = true;
+          return;
+        }
         set((state) => {
           const messages = [...state.messages];
           const last = messages[messages.length - 1];
@@ -163,6 +232,7 @@ export const useChatStore = create<ChatStore>()(
           }
           return { messages, loading: false };
         });
+        currentTyped = "";
       };
 
       return {
@@ -214,19 +284,26 @@ export const useChatStore = create<ChatStore>()(
             unread: !state.isOpen || state.isMinimized ? 0 : state.unread,
           })),
         clear: () =>
-          set(() => ({
-            messages: [],
-            input: "",
-            unread: 0,
-            loading: false,
-            error: null,
-          })),
+          set(() => {
+            stopTypingLoop();
+            abortController?.abort();
+            abortController = null;
+            return {
+              messages: [],
+              input: "",
+              unread: 0,
+              loading: false,
+              error: null,
+            };
+          }),
         cancel: () => {
           if (abortController) {
             abortController.abort();
             abortController = null;
-            set({ loading: false });
           }
+          stopTypingLoop();
+          finalizeAssistant();
+          set({ loading: false });
         },
         sendMessage: async (text?: string) => {
           const state = get();
@@ -323,6 +400,8 @@ export const useChatStore = create<ChatStore>()(
               error,
             });
             abortController = null;
+            stopTypingLoop();
+            finalizeAssistant();
             set((prev) => ({
               loading: false,
               error:
