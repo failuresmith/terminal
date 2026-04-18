@@ -1,4 +1,4 @@
-import logOne from "./logs/2025-01-15-ship.md?raw";
+import logOne from "./logs/genai_compression.md?raw";
 import logTwo from "./logs/2025-01-21-tab.md?raw";
 
 export type LogEntry = {

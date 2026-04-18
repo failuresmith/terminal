@@ -2061,16 +2061,9 @@
   }
 
   .t-markdown {
-    margin: 14px 0;
     padding: 14px 16px;
-    border: 1px solid rgba(141, 208, 255, 0.18);
     border-radius: 12px;
-    background: linear-gradient(180deg,
-        rgba(141, 208, 255, 0.12),
-        rgba(11, 16, 26, 0.6));
-    color: #e8f0ff;
     line-height: 1.55;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   }
 
   .t-markdownTitle {
@@ -2168,9 +2161,9 @@
   }
 
   .t-markdownBody pre {
-    background: rgba(11, 16, 26, 0.8);
-    border: 1px solid rgba(141, 208, 255, 0.2);
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
     border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(11, 177, 199, 0.192);
     padding: 10px 12px;
     overflow-x: auto;
     margin: 10px 0;
