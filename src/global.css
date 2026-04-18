@@ -1324,7 +1324,10 @@
     position: fixed;
     inset: 0;
     z-index: var(--z-search, 30);
-    pointer-events: none;
+    display: grid;
+    place-items: center;
+    padding: clamp(12px, 3vw, 24px);
+    pointer-events: auto;
   }
 
   .t-searchOverlay {
@@ -1336,15 +1339,17 @@
   }
 
   .t-searchWindow {
-    position: absolute;
-    inset: 4% 4% auto 4%;
-    min-height: 75vh;
-    max-height: 88vh;
+    position: relative;
+    width: min(1120px, 100%);
+    max-height: 100%;
     background: color-mix(in srgb, var(--surface) 94%, var(--accent) 6%);
     border: 1px solid color-mix(in srgb, var(--accent) 70%, var(--surface) 30%);
     border-radius: 16px;
     box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
     pointer-events: auto;
@@ -1354,6 +1359,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1;
     padding: 12px 16px;
     padding-right: 56px;
     /* give space for floating close button */
@@ -1480,8 +1488,6 @@
 
   .t-searchGroups {
     padding: 14px 16px 18px;
-    overflow: auto;
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 12px;
