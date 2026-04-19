@@ -213,6 +213,15 @@ function AvatarMessageSegment({
             );
           })}
         </span>
+        {segment.bodyLines?.length ? (
+          <span className="t-avatarBody">
+            {segment.bodyLines.map((line, lineIdx) => (
+              <span key={`avatar-body-line-${lineIdx}`} className="t-avatarLine">
+                {line}
+              </span>
+            ))}
+          </span>
+        ) : null}
       </span>
 
       {allowModal && isOpen ? (
@@ -743,28 +752,21 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [openIndex]);
 
-  const renderParagraphs = (text: string) =>
-    text
-      .split(/\n+/)
-      .map((paragraph) => paragraph.trim())
-      .filter(Boolean)
-      .map((paragraph, idx) => <p key={idx}>{paragraph}</p>);
+  const renderMarkdown = (content: string | string[], title?: string) => {
+    const markdown = Array.isArray(content)
+      ? content
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => `- ${line}`)
+          .join("\n")
+      : content;
 
-  const renderTechnicalDetails = (text: string) => {
-    const lines = text
-      .split(/\n+/)
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .slice(0, 5);
-
-    if (!lines.length) return null;
+    if (!markdown.trim()) return null;
 
     return (
-      <ul className="t-proofList t-proofTechList">
-        {lines.map((line, idx) => (
-          <li key={`tech-${idx}`}>{line}</li>
-        ))}
-      </ul>
+      <div className="t-proofMarkdown">
+        <MarkdownBlock segment={{ type: "markdown", markdown, title }} />
+      </div>
     );
   };
 
@@ -853,23 +855,17 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
                 {modalSections.length
                   ? modalSections.map((section) => (
                       <div className="t-proofModalSection" key={section.label}>
-                        <div className="t-proofModalLabel">{section.label}</div>
-                        {Array.isArray(section.content) ? (
-                          <ul className="t-proofList">
-                            {(section.content as string[]).map((bullet, bulletIdx) => (
-                              <li key={`${section.label}-${bulletIdx}`}>{bullet}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div className="t-proofModalCopy">{renderParagraphs(section.content)}</div>
-                        )}
+                      <div className="t-proofModalLabel">{section.label}</div>
+                        <div className="t-proofModalCopy">
+                          {renderMarkdown(section.content)}
+                        </div>
                       </div>
                     ))
                   : (
                     <div className="t-proofModalSection">
                       <div className="t-proofModalLabel">Details</div>
                       <div className="t-proofModalCopy">
-                        <p>Details coming soon.</p>
+                        {renderMarkdown("Details coming soon.")}
                       </div>
                     </div>
                   )}
@@ -878,8 +874,8 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
               {openItem.technicalDetails ? (
                 <details className="t-proofDetails">
                   <summary>Technical details (for engineers)</summary>
-                  <div className="t-proofModalCopy">
-                    {renderTechnicalDetails(openItem.technicalDetails) || renderParagraphs(openItem.technicalDetails)}
+                  <div className="t-proofModalCopy t-proofDetailsBody">
+                    {renderMarkdown(openItem.technicalDetails)}
                   </div>
                 </details>
               ) : null}

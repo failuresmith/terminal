@@ -133,6 +133,7 @@ export type AvatarSegment = {
   type: "avatar";
   image: string;
   lines: string[];
+  bodyLines?: string[];
   label?: string;
   meta?: string;
   emphasizeLines?: number[];

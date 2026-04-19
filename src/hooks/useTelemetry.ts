@@ -6,7 +6,7 @@ import {
   TelemetryInput,
 } from "@types";
 
-const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/terminalTSX";
+const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/terminalFS";
 const RETRIABLE_STATUS = [408, 425, 429, 500, 502, 503, 504];
 const FP_STORAGE_KEY = "anon_privacy_respecting_uuid";
 
