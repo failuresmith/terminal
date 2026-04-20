@@ -66,11 +66,7 @@ function EyeIcon({ open }: { open: boolean }) {
   );
 }
 
-function CopyButton({
-  segment,
-}: {
-  segment: CopySegment;
-}) {
+function CopyButton({ segment }: { segment: CopySegment }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -217,7 +213,10 @@ function AvatarMessageSegment({
         {segment.bodyLines?.length ? (
           <span className="t-avatarBody">
             {segment.bodyLines.map((line, lineIdx) => (
-              <span key={`avatar-body-line-${lineIdx}`} className="t-avatarLine">
+              <span
+                key={`avatar-body-line-${lineIdx}`}
+                className="t-avatarLine"
+              >
                 {line}
               </span>
             ))}
@@ -227,7 +226,10 @@ function AvatarMessageSegment({
 
       {allowModal && isOpen ? (
         <div className="t-avatarModal" role="dialog" aria-modal="true">
-          <div className="t-avatarModal__backdrop" onClick={() => setIsOpen(false)} />
+          <div
+            className="t-avatarModal__backdrop"
+            onClick={() => setIsOpen(false)}
+          />
           <div className="t-avatarModal__content">
             <button
               type="button"
@@ -239,7 +241,11 @@ function AvatarMessageSegment({
             </button>
             <img
               src={segment.image}
-              alt={segment.label ? `${segment.label} avatar full view` : "avatar full view"}
+              alt={
+                segment.label
+                  ? `${segment.label} avatar full view`
+                  : "avatar full view"
+              }
             />
             {segment.label ? (
               <span className="t-avatarModal__caption">{segment.label}</span>
@@ -326,7 +332,10 @@ function SearchHits({
       snippets: typeof hits;
     };
     const by: Record<string, { label: string; items: Entry[] }> = {};
-    const labelFor: Record<SearchHitsSegmentType["hits"][number]["source"], string> = {
+    const labelFor: Record<
+      SearchHitsSegmentType["hits"][number]["source"],
+      string
+    > = {
       blog: "Blogs",
       log: "Logs",
       resume: "Resume",
@@ -343,7 +352,9 @@ function SearchHits({
         };
       }
 
-      const existing = by[sourceKey].items.find((item) => item.key === entryKey);
+      const existing = by[sourceKey].items.find(
+        (item) => item.key === entryKey,
+      );
       if (existing) {
         existing.snippets.push(hit);
       } else {
@@ -440,7 +451,9 @@ function SearchHits({
                                 <button
                                   type="button"
                                   className="t-commandLink t-pressable"
-                                  onClick={() => executeCommand(entry.readCommand)}
+                                  onClick={() =>
+                                    executeCommand(entry.readCommand)
+                                  }
                                   aria-label={`Read more from ${entry.title}`}
                                 >
                                   Read more
@@ -459,7 +472,9 @@ function SearchHits({
                                 ) : null}
                               </div>
                               {entry.downloadCommand ? (
-                                <DownloadIntegrity command={entry.downloadCommand} />
+                                <DownloadIntegrity
+                                  command={entry.downloadCommand}
+                                />
                               ) : null}
                             </>
                           ) : null}
@@ -547,12 +562,7 @@ function renderSegment(
       );
     }
     case "copy": {
-      return (
-        <CopyButton
-          key={key}
-          segment={segment as CopySegment}
-        />
-      );
+      return <CopyButton key={key} segment={segment as CopySegment} />;
     }
     case "faq": {
       const faq = segment as FaqSegment;
@@ -566,9 +576,7 @@ function renderSegment(
       return <MarkdownBlock key={key} segment={segment as MarkdownSegment} />;
     }
     case "work": {
-      return (
-        <WorkGrid key={key} segment={segment as WorkSegment} />
-      );
+      return <WorkGrid key={key} segment={segment as WorkSegment} />;
     }
     case "activityTree": {
       return (
@@ -635,9 +643,11 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
     const panelInner = panelInnerRefs.current[idx];
     if (!panelInner) return;
 
-    const nextHeight = Math.ceil(panelInner.getBoundingClientRect().height || panelInner.scrollHeight);
+    const nextHeight = Math.ceil(
+      panelInner.getBoundingClientRect().height || panelInner.scrollHeight,
+    );
     setPanelHeights((current) =>
-      current[idx] === nextHeight ? current : { ...current, [idx]: nextHeight }
+      current[idx] === nextHeight ? current : { ...current, [idx]: nextHeight },
     );
   };
 
@@ -650,7 +660,9 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
 
     const handleResize = () => syncPanelHeight(openIndex);
     const observer =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(handleResize) : null;
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(handleResize)
+        : null;
 
     observer?.observe(panelInner);
     window.addEventListener("resize", handleResize);
@@ -667,7 +679,9 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
         const isOpen = openIndex === idx;
         const shareCommand =
           item.slug &&
-          (item.kind === "blog" ? `blog read ${item.slug}` : `logs read ${item.slug}`);
+          (item.kind === "blog"
+            ? `blog read ${item.slug}`
+            : `logs read ${item.slug}`);
         const shareText =
           shareCommand && typeof window !== "undefined"
             ? buildShareLink(shareCommand, window.location.href)
@@ -698,7 +712,9 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
 
             <div
               className="t-logPanel"
-              style={{ maxHeight: isOpen ? `${panelHeights[idx] ?? 0}px` : "0px" }}
+              style={{
+                maxHeight: isOpen ? `${panelHeights[idx] ?? 0}px` : "0px",
+              }}
             >
               <div
                 ref={(node) => {
@@ -708,7 +724,11 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
               >
                 {item.body ? (
                   <MarkdownBlock
-                    segment={{ type: "markdown", markdown: item.body, title: item.note }}
+                    segment={{
+                      type: "markdown",
+                      markdown: item.body,
+                      title: item.note,
+                    }}
                   />
                 ) : (
                   <div className="t-logEmpty">No content</div>
@@ -774,7 +794,9 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
     <div className="t-work">
       <div className="t-proofHeader">
         <div className="t-proofTitle">Proof: results in production</div>
-        <div className="t-proofSubtitle">Cost down. Reliability up. MVPs shipped.</div>
+        <div className="t-proofSubtitle">
+          Cost down. Reliability up. MVPs shipped.
+        </div>
       </div>
 
       <div className="t-workGrid">
@@ -811,10 +833,7 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
           aria-label={`${openItem.title} details`}
           onClick={() => setOpenIndex(null)}
         >
-          <div
-            className="t-workModal"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="t-workModal" onClick={(e) => e.stopPropagation()}>
             <div className="t-workModalHead">
               <div>
                 <div className="t-workModalEyebrow">Case study</div>
@@ -938,7 +957,10 @@ function ActivityTree({
                 {node.tags?.length && isActive ? (
                   <div className="t-activityTreeTags">
                     {node.tags.map((tag) => (
-                      <span key={`${node.id}-${tag}`} className="t-activityTreeTag">
+                      <span
+                        key={`${node.id}-${tag}`}
+                        className="t-activityTreeTag"
+                      >
                         {tag}
                       </span>
                     ))}
@@ -956,7 +978,9 @@ function ActivityTree({
 
   return (
     <div className="t-activityTree">
-      {segment.title ? <div className="t-activityTreeHeading">{segment.title}</div> : null}
+      {segment.title ? (
+        <div className="t-activityTreeHeading">{segment.title}</div>
+      ) : null}
       {renderNodes(segment.nodes)}
     </div>
   );
@@ -981,18 +1005,22 @@ export function TerminalLineRow({
     line.length === 0
       ? [<span key={`line-${lineIndex}-empty`}></span>]
       : line.map((segment, idx) =>
-        renderSegment(
-          segment,
-          `line-${lineIndex}-seg-${idx}`,
-          executeCommand,
-        )
-      );
+          renderSegment(
+            segment,
+            `line-${lineIndex}-seg-${idx}`,
+            executeCommand,
+          ),
+        );
 
   const promptGlyph = prompt || ">";
   const commandLabel = (() => {
     if (commandText) return commandText;
     const first = line[0];
-    if (line.length === 1 && typeof first !== "string" && first.type === "text") {
+    if (
+      line.length === 1 &&
+      typeof first !== "string" &&
+      first.type === "text"
+    ) {
       const raw = first.text || "";
       const prefix = `${promptGlyph} `;
       return raw.startsWith(prefix) ? raw.slice(prefix.length) : raw;
@@ -1011,10 +1039,14 @@ export function TerminalLineRow({
         onToggleCollapse?.();
       }}
     >
-      <span className="t-lineCaret" aria-hidden="true">{promptGlyph}</span>
+      <span className="t-lineCaret" aria-hidden="true">
+        {promptGlyph}
+      </span>
       <span className="t-lineCommandText">{commandLabel}</span>
     </button>
-  ) : content;
+  ) : (
+    content
+  );
 
   return (
     <span
