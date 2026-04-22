@@ -2518,8 +2518,8 @@
 
   .t-proofPain {
     color: color-mix(in srgb, var(--text) 90%, var(--accent) 18%);
-    font-size: 1.03em;
-    font-weight: 700;
+    font-size: 0.9em;
+    font-weight: 500;
     letter-spacing: 0.1px;
     line-height: 1.28;
     display: -webkit-box;
@@ -2532,7 +2532,7 @@
 
   .t-proofOutcome {
     color: color-mix(in srgb, var(--muted) 18%, var(--text) 82%);
-    font-size: 12.5px;
+    font-size: 11.5px;
     line-height: 1.42;
     letter-spacing: 0.1px;
     display: -webkit-box;
@@ -2674,6 +2674,36 @@
     padding: 0;
     border-radius: 0;
     line-height: inherit;
+    white-space: normal;
+  }
+
+  .t-proofMarkdown .t-markdownBody {
+    white-space: normal;
+    line-height: 1.48;
+  }
+
+  .t-proofMarkdown .t-markdownBody h1,
+  .t-proofMarkdown .t-markdownBody h2,
+  .t-proofMarkdown .t-markdownBody h3,
+  .t-proofMarkdown .t-markdownBody h4,
+  .t-proofMarkdown .t-markdownBody h5,
+  .t-proofMarkdown .t-markdownBody h6 {
+    margin: 1.15em 0 0.42em;
+    line-height: 1.25;
+  }
+
+  .t-proofMarkdown .t-markdownBody p {
+    margin: 0.55em 0;
+  }
+
+  .t-proofMarkdown .t-markdownBody ul,
+  .t-proofMarkdown .t-markdownBody ol {
+    margin: 0.45em 0 0.85em 1.1em;
+    padding-left: 0.9em;
+  }
+
+  .t-proofMarkdown .t-markdownBody li {
+    margin: 0.28em 0;
   }
 
   .t-proofMarkdown .t-markdownTitle {
