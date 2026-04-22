@@ -13,7 +13,7 @@
 
 [] add llm friendly pages to the resume pdf, and terminal onboarding links.
 [] guide agents when scraping the page (even when js is not enabled)
-[] prepare an miladtsx.llm.txt or json
+[] prepare an FS.llm.txt or json
 
 
 [] different level of verbosity
