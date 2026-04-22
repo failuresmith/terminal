@@ -347,7 +347,6 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
 <div class="intro-hero">
   <div class="intro-headline">I make systems behave predictably under failure.</div>
   <div class="intro-subline font-mono">Failures are inevitable. Uncontrolled behavior is not.</div>
-  <div class="intro-proof">
   <p>I take systems that break under load, cost, or scale—and turn them into predictable, controllable systems.</p>
     <div class="intro-proofLabel">That includes:</div>
     <div class="intro-proofList">
